@@ -3,7 +3,7 @@ import { PrimaryGeneratedColumn, Column } from "typeorm";
 export abstract class BaseContent {
 
     @PrimaryGeneratedColumn()
-    id: string;
+    id: number;
 
     @Column()
     name: string;

@@ -46,3 +46,12 @@ export interface IUpdateCategory {
     }
     id: number;
 }
+
+export interface IPaginatedResult<T> {
+    recipeFeed?: T;
+    categoryFeed?: T;
+    pageInfo: {
+        nextPageCursor: number | null
+        hasNextPage: boolean
+    }
+}

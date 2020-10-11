@@ -3,7 +3,7 @@ import { gql } from 'apollo-server-express';
 export const recipeTypeDefs = gql `
     extend type Query {
         recipe(id: ID!): Recipe
-        recipes(cursor: String, limit: Int, input: filterRecipeInput): RecipeFeed
+        recipes(cursor: Int, limit: Int, input: filterRecipeInput): RecipeFeed
         getMyRecipes: [Recipe]
     }
 
@@ -18,7 +18,12 @@ export const recipeTypeDefs = gql `
         description: String!
         ingredients: [String!]
         category: Category!
-        user: User
+        user: UserInfo
+    }
+
+    type UserInfo {
+        id: ID!
+        name: String!
     }
     
     input createRecipeInput {

@@ -3,13 +3,13 @@ import { User } from '../entity/User';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs'
 import { IResolvers } from 'apollo-server-express';
-import { ILogSign } from '../interfaces/interfaces';
+import { ILogSign, IUser } from '../interfaces/interfaces';
 
 
 export const userResolver: IResolvers = {
-
+    //mutation for users
     Mutation: {
-        signUp: async(_: any, { input }: ILogSign): Promise<Object> => {
+        signUp: async(_: any, { input }: ILogSign): Promise<IUser> => {
             try {
                 const userExist = await getRepository(User).findOne({where: {email: input.email}})
                 if (userExist) {

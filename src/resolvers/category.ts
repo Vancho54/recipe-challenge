@@ -3,12 +3,13 @@ import { Category } from '../entity/Category';
 import { Recipe } from '../entity/Recipe';
 
 import { IResolvers } from 'apollo-server';
-import { IFilterInput, IUpdateCategory, IUser } from '../interfaces/interfaces';
+import { IFilterInput, IPaginatedResult, IUpdateCategory, IUser } from '../interfaces/interfaces';
 
 
 export const categoryResolver: IResolvers = {
+    //querys for category
     Query: {
-        category: async(_: any, { id }: { id: Number }, user: IUser): Promise<Object> => {
+        category: async(_: any, { id }: { id: Number }, user: IUser): Promise<Category> => {
             try {
                 if (!user.email) {
                     throw new Error ('Access denied, please login to continue')
@@ -24,7 +25,7 @@ export const categoryResolver: IResolvers = {
                 throw error;
             };
         },
-        categories: async (_: any, args: IFilterInput, user: IUser): Promise<Object> => {
+        categories: async (_: any, args: IFilterInput, user: IUser): Promise<IPaginatedResult<Category[]>> => {
             const { cursor, limit = 5, input } = args
             try {
                 let result
@@ -70,19 +71,19 @@ export const categoryResolver: IResolvers = {
     },
 
     Category: {
-        recipes: async (parent: Recipe): Promise<Object> => {
+        recipes: async (parent: Recipe): Promise<Recipe[]> => {
             const result = await getRepository(Recipe).find({relations: ['category'], where: {category: parent.id}});
             return result;
         }
     },
-
+    //mutations for category
     Mutation: {
-        createCategory: async(_: any, { input }: {input: {name: string}}, user: IUser): Promise<Object> => {
+        createCategory: async(_: any, { input }: {input: {name: string}}, user: IUser): Promise<Category> => {
             try {
                 if (!user.email) {
                     throw new Error ('Access denied, please login to continue');
                 }
-                const newCategory = await getRepository(Category)
+                const newCategory = getRepository(Category)
                     .create({... input});
                 return await getRepository(Category)
                     .save(newCategory);
@@ -109,7 +110,7 @@ export const categoryResolver: IResolvers = {
                 throw error;
             };
         },
-        updateCategory: async(_: any, args: IUpdateCategory, user: IUser): Promise<Object> => {
+        updateCategory: async(_: any, args: IUpdateCategory, user: IUser): Promise<Category> => {
             const { input, id } = args
             try {
                 if (!user.email) {

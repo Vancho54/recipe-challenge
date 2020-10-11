@@ -3,12 +3,13 @@ import { getRepository } from 'typeorm';
 import { Category } from '../entity/Category';
 import { Recipe } from '../entity/Recipe';
 import { User } from '../entity/User'
-import { IFilterInput, IInputCreateRecipe, IInputRecipe, IUser } from '../interfaces/interfaces';
+import { IFilterInput, IInputCreateRecipe, IInputRecipe, IPaginatedResult, IUser } from '../interfaces/interfaces';
 
 
 export const recipeResolver: IResolvers = {
+    //querys for recipes
     Query: {
-        getMyRecipes: async (_: any, __: any, user: IUser): Promise<Object> => {
+        getMyRecipes: async (_: any, __: any, user: IUser): Promise<Recipe[]> => {
             try {
                 if (!user.email) {
                     throw new Error ('Access denied, please login to continue');
@@ -21,7 +22,7 @@ export const recipeResolver: IResolvers = {
                 throw error;
             };
         },
-        recipe: async(_: any, { id }: {id: number}, user: IUser): Promise<Object> => {
+        recipe: async(_: any, { id }: {id: number}, user: IUser): Promise<Recipe> => {
             try {
                 if (!user.email) {
                     throw new Error ('Access denied, please login to continue');
@@ -37,7 +38,7 @@ export const recipeResolver: IResolvers = {
                 throw error;
             }
         },
-        recipes: async (_: any, args: IFilterInput, user: IUser): Promise<Object> => {
+        recipes: async (_: any, args: IFilterInput, user: IUser): Promise<IPaginatedResult<Recipe[]>> => {
             const { cursor, limit = 5, input } = args
             try {
                 let query;
@@ -55,11 +56,11 @@ export const recipeResolver: IResolvers = {
                     query = getRepository(Recipe)
                         .createQueryBuilder("recipe")
                         .leftJoinAndSelect("recipe.category", "category")
-                        .leftJoinAndSelect("recipe.user", "user")
+                        .leftJoinAndSelect("recipe.user", "user.id")
                         .orderBy('recipe.id', 'ASC')
                         .where(`LOWER(recipe.${input.filterby}) like LOWER(:text)`, 
                         {text: `%${input.searchText}%`})
-                }
+                };
                 if (cursor) {
                     result = await query
                         .andWhere(`recipe.id > ${cursor}`)
@@ -69,7 +70,7 @@ export const recipeResolver: IResolvers = {
                     result = await query
                         .limit(limit + 1)
                         .getMany();
-                }
+                };
                 const hasNextPage = result.length > limit;
                 result = hasNextPage ? result.slice(0, -1) : result;
                 return {
@@ -85,9 +86,9 @@ export const recipeResolver: IResolvers = {
             };
         },
     },
-
+    //mutation for recipes
     Mutation: {
-        createRecipe: async(_: any, args: IInputCreateRecipe, loggedUser: IUser): Promise<Object> => {
+        createRecipe: async(_: any, args: IInputCreateRecipe, loggedUser: IUser): Promise<Recipe> => {
             const { input, categoryId } = args
             try {
                 if (!loggedUser.email) {
@@ -127,7 +128,7 @@ export const recipeResolver: IResolvers = {
                 throw error;
             };
         },
-        updateRecipe: async(_: any, args: IInputRecipe, user: IUser): Promise<Object> => {
+        updateRecipe: async(_: any, args: IInputRecipe, user: IUser): Promise<Recipe> => {
             const { input, id } = args
             try {
                 if (!user.email) {

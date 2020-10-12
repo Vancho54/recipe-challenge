@@ -13,8 +13,13 @@ export interface ILogSign {
     }
 }
 
+export interface IGetMyRecipes {
+    cursor: number;
+    limit: number;
+}
+
 export interface IFilterInput {
-    cursor: string;
+    cursor: number;
     limit: number;
     input: {
         filterby: string;

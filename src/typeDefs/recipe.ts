@@ -4,7 +4,7 @@ export const recipeTypeDefs = gql `
     extend type Query {
         recipe(id: ID!): Recipe
         recipes(cursor: Int, limit: Int, input: filterRecipeInput): RecipeFeed
-        getMyRecipes: [Recipe]
+        getMyRecipes(cursor: Int, limit: Int): RecipeFeed
     }
 
     type RecipeFeed {

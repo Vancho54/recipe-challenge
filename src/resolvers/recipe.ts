@@ -3,20 +3,45 @@ import { getRepository } from 'typeorm';
 import { Category } from '../entity/Category';
 import { Recipe } from '../entity/Recipe';
 import { User } from '../entity/User'
-import { IFilterInput, IInputCreateRecipe, IInputRecipe, IPaginatedResult, IUser } from '../interfaces/interfaces';
+import { IFilterInput, IGetMyRecipes, IInputCreateRecipe, IInputRecipe, IPaginatedResult, IUser } from '../interfaces/interfaces';
 
 
 export const recipeResolver: IResolvers = {
     //querys for recipes
     Query: {
-        getMyRecipes: async (_: any, __: any, user: IUser): Promise<Recipe[]> => {
+        getMyRecipes: async (_: any, args: IGetMyRecipes, user: IUser): Promise<IPaginatedResult<Recipe[]>> => {
+            const { cursor, limit = 5 } = args
             try {
+                let query
+                let result
                 if (!user.email) {
                     throw new Error ('Access denied, please login to continue');
                 }
-                const result = await getRepository(Recipe)
-                    .find({where: {user: user.id}, relations: ['user', 'category']});
-                return result;
+                query = getRepository(Recipe)
+                    .createQueryBuilder("recipe")
+                    .leftJoinAndSelect("recipe.category", "category")
+                    .leftJoinAndSelect("recipe.user", "user")
+                    .orderBy('recipe.id', 'ASC')
+                    .where(`recipe.user = ${user.id}`)
+                if (cursor) {
+                    result = await query
+                        .andWhere(`recipe.id > ${cursor}`)
+                        .limit(limit + 1)
+                        .getMany()
+                } else {
+                    result = await query
+                        .limit(limit + 1)
+                        .getMany();
+                }
+                const hasNextPage = result.length > limit;
+                result = hasNextPage ? result.slice(0, -1) : result;
+                return {
+                    recipeFeed: result,
+                    pageInfo: {
+                        nextPageCursor: hasNextPage ? result[result.length -1].id : null,
+                        hasNextPage
+                    }
+                };
             } catch(error) {
                 console.log(error);
                 throw error;

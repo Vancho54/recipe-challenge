@@ -1,4 +1,4 @@
-# Awesome Project Build with TypeORM
+# API build with Apollo, GraphQL, TypeORM and with a Postgree DB
 
 Steps to run this project:
 

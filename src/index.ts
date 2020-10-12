@@ -24,7 +24,8 @@ const startServer = async () => {
         contextObj = req.user;
       }
       return contextObj;
-    } 
+    },
+    playground: true 
   });
 
   await createConnection();

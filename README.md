@@ -1,5 +1,8 @@
 # API build with Apollo, GraphQL, TypeORM and with a Postgree DB
 
+## Information
+This is a API CRUD (create, read, update, and delete), you can do that operation and populate a recipes Database
+
 ## Installation
 Steps to run this project:
 
@@ -12,8 +15,9 @@ $ git clone https://github.com/Vancho54/recipe-challenge
 ```
 $ npm i
 ```
+3. Create a Postgres DB and connect it with the project
 
-3. Setup database settings inside `ormconfig.json` file
+4. Setup database settings inside `ormconfig.json` file that looks like this
 ```
 "type": "postgres",
    "host": "localhost",
@@ -28,9 +32,32 @@ $ npm i
    ]
 ```
 
-4. Run `npm start` command
+5. Run `npm start` command
 ```
 $ npm start
 ```
+
+## Testing the queries
+To test the queries follow the following instructions:
+
+1. Enter to http://localhost:4000/graphql. You are in the playground now.
+
+2. You can try queries and mutation, below you have a list of queries to try:
+
+```
+Sign Up
+Login
+Create category
+Create recipe 
+Get recipes
+Get categories
+Get one category
+Get one recipe
+Update recipe
+Update category
+```
+
+Remember, to create a recipe you must assign it to a category.
+
 
 # Puzzle NodeJS Challenge by Iván Alejandro Palacios

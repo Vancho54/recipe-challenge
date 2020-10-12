@@ -25,7 +25,8 @@ const startServer = async () => {
       }
       return contextObj;
     },
-    playground: true 
+    playground: true,
+    introspection: true 
   });
 
   await createConnection();

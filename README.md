@@ -34,7 +34,7 @@ $ npm i
 
 5. Run `npm start` command
 ```
-$ npm start
+$ npm run begin
 ```
 
 ## Testing the queries

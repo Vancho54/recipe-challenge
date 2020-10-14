@@ -45,19 +45,55 @@ To test the queries follow the following instructions:
 2. You can try queries and mutation, below you have a list of queries to try:
 
 ```
-Sign Up
-Login
-Create category
-Create recipe 
-Get recipes
-Get categories
-Get one category
-Get one recipe
-Update recipe
-Update category
+signUp (input: {
+   name: String
+   email: Email
+   password: between 7 - 15 characters
+})
+Login (input: {
+   email: Email
+   password: between 7 - 15 characters 
+})
+createCategory (input: {
+   name: String
+})
+createRecipe (input: {
+   name: String
+   description: String
+   ingrendients: Array of String
+   categoryId: Int
+})
+recipes (filterby: {enum: {
+   all
+   name
+   description
+   ingredients
+}} searchText: String)
+categories (filterby: {enum: {
+   all
+   name
+}} searchText: String)
+category (id: Int)
+recipe (id: Int)
+updateRecipe (id: Int input: {
+   name: String
+   ingredients: Array of String
+   description: String
+})
+updateCategory (id: Int input: {
+   name: String
+})
 ```
 
 Remember, to create a recipe you must assign it to a category.
+
+## Login
+
+To try the mutation and queries you must be logged in, to do that create a user with the mutation signUp and Login with the mutation Login and copy paste de token in HTTP Headers:
+
+```
+"Authorization": "Bearer: (copy the token here)"
+```
 
 
 # Puzzle NodeJS Challenge by Iván Alejandro Palacios
